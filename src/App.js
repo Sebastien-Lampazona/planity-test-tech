@@ -1,23 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import DayCalendar from './components/DayCalendar';
+import events from './assets/input.json';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import isBetween from 'dayjs/plugin/isBetween';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
+dayjs.extend(customParseFormat);
+dayjs.extend(isBetween);
+dayjs.extend(isSameOrBefore);
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main-app">
+      <DayCalendar events={events}/>
     </div>
   );
 }
