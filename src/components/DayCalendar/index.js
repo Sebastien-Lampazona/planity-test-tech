@@ -6,7 +6,7 @@ import EventsOfADay from './EventsOfADay';
 import './styles.scss';
 
 const hourStart = 9;
-const hourEnd = 21;
+const hourEnd = 19;
 
 const DayCalendar = ({ events = [] }) => {
   const eventListRef = React.createRef();
@@ -27,7 +27,7 @@ const DayCalendar = ({ events = [] }) => {
           height: `${(100 / diffHour)}%`,
         }}
       >
-        {hour.format('HH:mm')} {/* Affiche l'heure au format HH:mm */}
+        <span className='hour'>{hour.format('HH:mm')}</span>{/* Affiche l'heure au format HH:mm */}
       </div>
     ))
   }, []);
