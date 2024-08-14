@@ -10,21 +10,22 @@ const Event = ({
     left = 0,
     width = '100%',
     height = 100,
-    overlapCounter = 0,
+    offset = 0,
 }) => {
     const startTime = useMemo(() => dayjs(start, 'HH:mm'), [start]);
     const fontSize = useMemo(() => Math.min(Math.max(height / 2, 10), 30), [height]);
+    const marginLeft = useMemo(() => offset * -20, [offset]);
     return (
         <div className='event' style={{
             top,
             left,
-            width,
+            width: width + Math.abs(marginLeft),
             height,
             fontSize,
+            marginLeft,
+            zIndex: offset,
         }}>
-            <div className='event-content'>
-                <div className='event-time'>{startTime.format('HH:mm')} - { startTime.add(duration, 'minutes').format('HH:mm')} - {`Event ${id}`}</div>
-            </div>
+            {startTime.format('HH:mm')} - { startTime.add(duration, 'minutes').format('HH:mm')} - {`Event ${id}`}
         </div>
     );
 };

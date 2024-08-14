@@ -6,7 +6,7 @@ import EventsOfADay from './EventsOfADay';
 import './styles.scss';
 
 const hourStart = 9;
-const hourEnd = 19;
+const hourEnd = 21;
 
 const DayCalendar = ({ events = [] }) => {
   const eventListRef = React.createRef();

@@ -6,18 +6,11 @@ import Event from '../Event';
 const EventsOfADay = ({ events = [], width, height, startAt = 0, endAt = 0 }) => {
 
     const deepCheckEventOverlap = useCallback((event, previousEvent) => {
+        if (!previousEvent) return null;
         const previousEventStart = dayjs(previousEvent.start, 'HH:mm');
         const previousEventEnd = dayjs(previousEvent.start, 'HH:mm').add(previousEvent.duration, 'minute');
         const eventStart = dayjs(event.start, 'HH:mm');
         const eventEnd = dayjs(event.start, 'HH:mm').add(event.duration, 'minute');
-        if (event.start === '19:40'){
-            console.log('calcul overlap', {
-                previousEventStart: previousEventStart.format('HH:mm'),
-                previousEventEnd: previousEventEnd.format('HH:mm'),
-                eventStart: eventStart.format('HH:mm'),
-                eventEnd: eventEnd.format('HH:mm'),
-            });
-        }
         // Is overlapping another event
         if (
             eventStart.isBefore(previousEventEnd)
@@ -67,12 +60,11 @@ const EventsOfADay = ({ events = [], width, height, startAt = 0, endAt = 0 }) =>
             const aStart = dayjs(a.start, 'HH:mm');
             const bStart = dayjs(b.start, 'HH:mm');
             return aStart.isSameOrBefore(bStart) ? -1 : 1;
-        });
-
-        sortedEvents.forEach((event, index) => {
-            if (index === 0) return;
-            // Get last overlaping event
-            return deepCheckEventOverlap(event, sortedEvents[index - 1]);
+        }).map((event, index, sortedEvents) => {
+            sortedEvents.slice(0, index).forEach((previousEvent) => {
+                deepCheckEventOverlap(event, previousEvent);
+            });
+            return event;
         });
 
         sortedEvents.forEach((event) => {
@@ -97,9 +89,9 @@ const EventsOfADay = ({ events = [], width, height, startAt = 0, endAt = 0 }) =>
                     betterOverlapEvent.width = eventWidth / divider;
                     event.left = betterOverlapEvent.left;
                     event.width = betterOverlapEvent.width;
+                    event.offset = betterOverlapEvent.offset ?? 0;
                     event.overlapCounter = nbOverlaping;
                 }
-
                 else {
                     const nbOverlaping = deepCountEventOverlap(event);
                     const divider = 1 + nbOverlaping;
@@ -110,16 +102,11 @@ const EventsOfADay = ({ events = [], width, height, startAt = 0, endAt = 0 }) =>
                     while (currentEvent) {
                         currentEvent.width = eventWidth;
                         currentEvent.left = offset * eventWidth;
+                        currentEvent.offset = offset;
                         currentEvent = currentEvent.overlap;
                         offset--;
                     }
                 }
-            }
-
-            if (event.start === '19:40'){
-                console.log('calcul overlap', {
-                    event
-                });
             }
         });
         return sortedEvents;
