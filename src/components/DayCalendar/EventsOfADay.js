@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import Event from '../Event';
+import { clone, cloneDeep } from 'lodash';
 
 const EventsOfADay = ({ events = [], width, height, startAt = 0, endAt = 0 }) => {
 
@@ -46,13 +47,35 @@ const EventsOfADay = ({ events = [], width, height, startAt = 0, endAt = 0 }) =>
         const eventStart = dayjs(event.start, 'HH:mm');
         while (currentEvent.overlap) {
             const currentEventOverlapEnd = dayjs(currentEvent.overlap.start, 'HH:mm').add(currentEvent.overlap.duration, 'minute');
-            if (eventStart.isAfter(currentEventOverlapEnd)) {
+            if(event.start === '10:35'){
+                console.log('currentEvent', currentEvent, 'eventStart', eventStart.format('HH:mm'), 'currentEventOverlapEnd', currentEventOverlapEnd.format('HH:mm'));
+            }
+            if (eventStart.isSameOrAfter(currentEventOverlapEnd)) {
                 return currentEvent.overlap;
             }
+
             currentEvent = currentEvent.overlap;
         }
         return null;
     }, []);
+
+    // const getBetterOverlapEvent = useCallback((event) => {
+    //     let currentEvent = cloneDeep(event);
+    //     const eventStart = dayjs(event.start, 'HH:mm');
+    //     const overlapedEvent = cloneDeep(currentEvent.overlap);
+
+    //     while (overlapedEvent) {
+    //         const currentEventOverlapEnd = dayjs(overlapedEvent.start, 'HH:mm').add(overlapedEvent.duration, 'minute');
+    //         if(event.start === '10:35'){
+    //             console.log('currentEvent', currentEvent, 'overlapedEvent', overlapedEvent);
+    //         }
+    //         if (eventStart.isSameOrAfter(currentEventOverlapEnd)) {
+    //             return overlapedEvent;
+    //         }
+    //         currentEvent = overlapedEvent;
+    //     }
+    //     return null;
+    // }, []);
 
     const updatedEvents = useMemo(() => {
         const sortedEvents = [...events].sort((a, b) => {
@@ -66,6 +89,8 @@ const EventsOfADay = ({ events = [], width, height, startAt = 0, endAt = 0 }) =>
             });
             return event;
         });
+
+        console.log('sortedEvents', sortedEvents);
 
         sortedEvents.forEach((event) => {
             const minuteHeight = height / ((endAt - startAt + 1) * 60);
